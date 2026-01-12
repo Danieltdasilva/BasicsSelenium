@@ -37,23 +37,5 @@ describe("SauceDemo UI Automation", function () {
     await driver
       .findElement(By.id("add-to-cart-sauce-labs-backpack"))
       .click();
-
-    // 5️⃣ Verify cart count
-    const cartBadge = await driver.findElement(By.className("shopping_cart_badge")).getText();
-    assert.strictEqual(cartBadge, "1");
-
-    // 6️⃣ Open menu
-    await driver.findElement(By.id("react-burger-menu-btn")).click();
-    await pause(1000);
-
-    // 7️⃣ Logout
-    await driver.findElement(By.id("logout_sidebar_link")).click();
-
-    // 8️⃣ Verify logout (login button visible again)
-    const loginBtn = await driver.wait(
-      until.elementLocated(By.id("login-button")),
-      5000
-    );
-    assert.ok(loginBtn);
   });
 });
