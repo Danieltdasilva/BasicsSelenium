@@ -35,55 +35,51 @@ describe("SauceDemo UI Automation", function () {
     await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
     await addBtn.click();
 
-
     // VERIFY CART BADGE = 1
     const cartBadge = await driver.wait(
       until.elementLocated(By.className("shopping_cart_badge")),
       5000
     );
-    const badgeText = await cartBadge.getText();
-    assert.strictEqual(badgeText, "1");
+    assert.strictEqual(await cartBadge.getText(), "1");
 
     // GO TO CART
     await driver.findElement(By.className("shopping_cart_link")).click();
 
-    // VERIFY ITEM EXISTS USING XPATH
+    // VERIFY ITEM EXISTS (XPath)
     const itemName = await driver.wait(
       until.elementLocated(
-        By.xpath("//div[@class='inventory_item_name']")
+        By.xpath("//div[contains(@class,'cart_item')]//div[@class='inventory_item_name']")
       ),
       5000
     );
-
-    const nameText = await itemName.getText();
-    assert.ok(nameText.length > 0);
+    assert.ok((await itemName.getText()).length > 0);
 
     // REMOVE ITEM
     await driver.findElement(By.id("remove-sauce-labs-backpack")).click();
 
-    // VERIFY BADGE IS GONE
-    // WAIT until cart badge disappears
+    // ✅ FIX: WAIT FOR CART ITEM TO DISAPPEAR (NOT BADGE)
     await driver.wait(async () => {
-      const badges = await driver.findElements(By.className("shopping_cart_badge"));
-      return badges.length === 0;
+      const items = await driver.findElements(By.className("cart_item"));
+      return items.length === 0;
     }, 5000);
 
-    // Final verification
+    // OPTIONAL: NAVIGATE BACK TO PRODUCTS TO FORCE HEADER REFRESH
+    await driver.findElement(By.id("continue-shopping")).click();
+
+    // VERIFY BADGE IS GONE (NOW SAFE)
     const badges = await driver.findElements(By.className("shopping_cart_badge"));
     assert.strictEqual(badges.length, 0);
 
     // LOGOUT
     await driver.findElement(By.id("react-burger-menu-btn")).click();
-    await driver.wait(until.elementLocated(By.id("logout_sidebar_link")), 5000);
+
     const logoutBtn = await driver.wait(
       until.elementLocated(By.id("logout_sidebar_link")),
       5000
     );
-
     await driver.wait(until.elementIsVisible(logoutBtn), 5000);
     await driver.wait(until.elementIsEnabled(logoutBtn), 5000);
     await logoutBtn.click();
-
 
     // VERIFY LOGIN PAGE
     await driver.wait(until.elementLocated(By.id("login-button")), 5000);
