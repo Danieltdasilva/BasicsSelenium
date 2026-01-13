@@ -32,7 +32,9 @@ describe("SauceDemo UI Automation", function () {
       until.elementLocated(By.id("add-to-cart-sauce-labs-backpack")),
       5000
     );
+    await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
     await addBtn.click();
+
 
     // VERIFY CART BADGE = 1
     const cartBadge = await driver.wait(
@@ -60,13 +62,28 @@ describe("SauceDemo UI Automation", function () {
     await driver.findElement(By.id("remove-sauce-labs-backpack")).click();
 
     // VERIFY BADGE IS GONE
+    // WAIT until cart badge disappears
+    await driver.wait(async () => {
+      const badges = await driver.findElements(By.className("shopping_cart_badge"));
+      return badges.length === 0;
+    }, 5000);
+
+    // Final verification
     const badges = await driver.findElements(By.className("shopping_cart_badge"));
     assert.strictEqual(badges.length, 0);
 
     // LOGOUT
     await driver.findElement(By.id("react-burger-menu-btn")).click();
     await driver.wait(until.elementLocated(By.id("logout_sidebar_link")), 5000);
-    await driver.findElement(By.id("logout_sidebar_link")).click();
+    const logoutBtn = await driver.wait(
+      until.elementLocated(By.id("logout_sidebar_link")),
+      5000
+    );
+
+    await driver.wait(until.elementIsVisible(logoutBtn), 5000);
+    await driver.wait(until.elementIsEnabled(logoutBtn), 5000);
+    await logoutBtn.click();
+
 
     // VERIFY LOGIN PAGE
     await driver.wait(until.elementLocated(By.id("login-button")), 5000);
