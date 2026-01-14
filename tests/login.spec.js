@@ -19,37 +19,37 @@ describe("SauceDemo UI Automation", function () {
   });
 
   it("logs in, adds an item to cart, and logs out", async function () {
-    // 1️⃣ Go to login page
+    // Go to login page
     await driver.get("https://www.saucedemo.com/");
     await pause(1000);
 
-    // 2️⃣ Login
+    // Login
     await driver.findElement(By.id("user-name")).sendKeys("standard_user");
     await driver.findElement(By.id("password")).sendKeys("secret_sauce");
     await driver.findElement(By.id("login-button")).click();
 
-    // 3️⃣ Verify successful login
+    // Verify successful login
     await driver.wait(until.elementLocated(By.className("inventory_list")), 10000);
     const title = await driver.findElement(By.className("title")).getText();
     assert.strictEqual(title, "Products");
 
-    // 4️⃣ Add item to cart (CREATE action)
+    // Add item to cart (CREATE action)
     await driver
       .findElement(By.id("add-to-cart-sauce-labs-backpack"))
       .click();
 
-    // 5️⃣ Verify cart count
+    // Verify cart count
     const cartBadge = await driver.findElement(By.className("shopping_cart_badge")).getText();
     assert.strictEqual(cartBadge, "1");
 
-    // 6️⃣ Open menu
+    // Open menu
     await driver.findElement(By.id("react-burger-menu-btn")).click();
     await pause(1000);
 
-    // 7️⃣ Logout
+    // Logout
     await driver.findElement(By.id("logout_sidebar_link")).click();
 
-    // 8️⃣ Verify logout (login button visible again)
+    // Verify logout (login button visible again)
     const loginBtn = await driver.wait(
       until.elementLocated(By.id("login-button")),
       5000
