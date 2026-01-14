@@ -8,7 +8,7 @@ class CartPage {
   async verifyItemPresent() {
     const item = await this.driver.wait(
       until.elementLocated(
-        By.xpath("//div[contains(@class,'cart_item')]//div[@class='inventory_item_name']")
+        By.xpath("//div[@class='inventory_item_name']")
       ),
       5000
     );
