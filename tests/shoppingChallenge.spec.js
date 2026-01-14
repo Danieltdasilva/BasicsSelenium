@@ -48,7 +48,7 @@ describe("SauceDemo UI Automation", function () {
     // VERIFY ITEM EXISTS (XPath)
     const itemName = await driver.wait(
       until.elementLocated(
-        By.xpath("//div[contains(@class,'cart_item')]//div[@class='inventory_item_name']")
+        By.xpath("//div[@class='inventory_item_name']")
       ),
       5000
     );
@@ -57,7 +57,7 @@ describe("SauceDemo UI Automation", function () {
     // REMOVE ITEM
     await driver.findElement(By.id("remove-sauce-labs-backpack")).click();
 
-    // ✅ FIX: WAIT FOR CART ITEM TO DISAPPEAR (NOT BADGE)
+    // FIX: WAIT FOR CART ITEM TO DISAPPEAR (NOT BADGE)
     await driver.wait(async () => {
       const items = await driver.findElements(By.className("cart_item"));
       return items.length === 0;
