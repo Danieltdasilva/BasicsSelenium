@@ -4,7 +4,7 @@ const BrowserFactory = require("../components/browserFactory");
 const MenuComponent = require("../components/logoutPage");
 const LoginPage = require("../pages/loginPage");
 const ProductsPage = require("../pages/productsPage");
-const CartPage = require("../pages/cartPage");
+const CartPage = require("../pages/CartPage");
 
 describe("SauceDemo UI Automation", function () {
   this.timeout(30000);

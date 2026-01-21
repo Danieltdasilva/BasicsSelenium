@@ -1,0 +1,9 @@
+{
+  "user1": {
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "firstName": "Test",
+    "lastName": "User",
+    "zipCode": "12345"
+  }
+}
