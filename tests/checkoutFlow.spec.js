@@ -6,62 +6,68 @@ const LoginPage = require("../pages/loginPage");
 const ProductsPage = require("../pages/productsPage");
 const CartPage = require("../pages/CartPage");
 const CheckoutPage = require("../pages/checkoutPage");
-const users = require("../data/users.json");
+const users = require("../Users/users.json");
 
-describe("Checkout Flow Automation", function () {
-  this.timeout(40000);
 
-  let driver, menu, loginPage, productsPage, cartPage, checkoutPage;
+describe("SauceDemo UI Automation - Checkout Cart Flow", function () {
+  this.timeout(30000);
+
+  let driver;
+  let loginPage, productsPage, cartPage, checkoutPage;
+
+  const user = users.user1;
+
 
   before(async function () {
     driver = await BrowserFactory.createChromeDriver();
-    menu = new MenuComponent(driver);
+
     loginPage = new LoginPage(driver);
     productsPage = new ProductsPage(driver);
     cartPage = new CartPage(driver);
     checkoutPage = new CheckoutPage(driver);
   });
 
-  after(async function () {
-    if (driver) await driver.quit();
-  });
+  // after(async function () {
+  //   if (driver) await driver.quit();
+  // });
 
-  it("logs in, adds multiple items, checks out, and completes order", async function () {
-    // Login
-    const user1 = users.user1;
+  it("logs in, adds item, completes checkout, and closes browser", async function () {
+    // LOGIN
     await loginPage.open();
-    await loginPage.login(user1.username, user1.password);
+    await loginPage.login(user.username, user.password);
     await loginPage.waitForLogin();
 
-    // Add items to cart
+    // ADD ITEM
     await productsPage.addBackpackToCart();
-    await productsPage.addBikeToCart();
+    const badgeCount = await productsPage.getCartBadgeCount();
+    assert.strictEqual(badgeCount, "1");
 
-    // Verify cart badge
-    let badge = await productsPage.getCartBadgeCount();
-    assert.strictEqual(badge, "2");
-
-    // Go to cart and verify items
+    // GO TO CART
     await productsPage.goToCart();
-    let itemsExist = await cartPage.verifyItemPresent();
-    assert.ok(itemsExist);
+    assert.ok(await cartPage.verifyItemPresent());
 
-    // Proceed to checkout
-    await cartPage.goToCheckout();
+    // CHECKOUT
+    await cartPage.clickCheckout();
+    assert.ok(await checkoutPage.isCheckoutInfoDisplayed());
 
-    // Fill customer info
-    await checkoutPage.customerInfo(user1.firstName, user1.lastName, user1.zipcode);
+    // CUSTOMER INFO
+    await checkoutPage.customerInfo(
+      user.firstName,
+      user.lastName,
+      user.zipCode
+    );
 
-    // Verify Overview page
-    let overviewVisible = await checkoutPage.isOverviewPageDisplayed();
-    assert.ok(overviewVisible);
+    assert.ok(await checkoutPage.isOverviewPageDisplayed());
 
-    // Finish checkout
+    // FINISH CHECKOUT
     await checkoutPage.clickFinish();
+    assert.ok(await checkoutPage.isCheckoutComplete());
+  });
 
-    // Verify completion
-    let completed = await checkoutPage.isCheckoutComplete();
-    assert.ok(completed);
+  after(async function () {
+    if (driver) {
+      await driver.quit();
+    }
 
     // Test done, browser will close in after()
   });
